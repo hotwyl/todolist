@@ -12,9 +12,11 @@ class Task extends Model
 
     protected $fillable = [
         'id',
+        'cod',
         'title',
         'description',
         'status',
+        'user_id',
     ];
 
     protected $hidden = [

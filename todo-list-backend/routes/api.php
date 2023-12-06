@@ -16,11 +16,12 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/update-password', [AuthController::class, 'updatePassword'])->middleware('auth:sanctum');
 Route::get('/me', [AuthController::class, 'me'])->name('me');
+// Auth::routes(['verify' => true]);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/tasks', [TaskController::class, 'index']);
-    Route::get('/task/{id}', [TaskController::class, 'show']);
+    Route::get('/task/{id}/{cod}', [TaskController::class, 'show']);
     Route::post('/task', [TaskController::class, 'store']);
-    Route::put('/task/{id}', [TaskController::class, 'update']);
-    Route::delete('/task/{id}', [TaskController::class, 'destroy']);
+    Route::put('/task/{id}/{cod}', [TaskController::class, 'update']);
+    Route::delete('/task/{id}/{cod}', [TaskController::class, 'destroy']);
 });

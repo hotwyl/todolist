@@ -2,16 +2,22 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
+
+    const STATUS_ACTIVE = 'active';
+    const STATUS_INACTIVE = 'inactive';
+
+    const TYPE_ADMIN = 'admin';
+    const TYPE_USER = 'user';
 
     /**
      * The attributes that are mass assignable.
@@ -20,6 +26,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'id',
+        'cod',
+        'login',
         'name',
         'email',
         'password',
@@ -31,9 +39,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
+        'id',
+        'login',
+        'email',
         'password',
         'remember_token',
         'email_verified_at',
+        'tipo',
+        'status',
         'created_at',
         'updated_at',
     ];
@@ -51,5 +64,20 @@ class User extends Authenticatable
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \Illuminate\Auth\Notifications\VerifyEmail);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->tipo === self::TYPE_ADMIN;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === self::STATUS_ACTIVE;
     }
 }

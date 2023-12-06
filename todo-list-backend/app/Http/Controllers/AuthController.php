@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Notifications\CustomVerifyEmailNotification;
 
 class AuthController extends Controller
 {
@@ -32,13 +33,21 @@ class AuthController extends Controller
 
             $user = User::create(array_merge(
                 $validator->validated(),
-                ['password' => bcrypt($request->password)]
+                [
+                    'status' => User::STATUS_ACTIVE, // 'status' => 'active
+                    'tipo' => User::TYPE_USER, // 'tipo' => 'user
+                    'cod' => (string) Str::uuid(),
+                    'login' => Str::slug($request->name, '_'),
+                    'password' => bcrypt($request->password)
+                    ]
             ));
             
-
+            // Envie a notificação de verificação de e-mail
+            // $user->notify(new CustomVerifyEmailNotification($user->verification_url));
+            // $user->sendEmailVerificationNotification();
+            
             $login = [
                 'nome' => $user->name,
-                'email' => $user->email,
                 'token' => $user->createToken('invoice')->plainTextToken,
             ];
 
@@ -80,8 +89,8 @@ class AuthController extends Controller
                     'status' => true,
                     'message' => 'Login efetuado com Sucesso.',
                     'content' => [
-                        'nome' => Auth::user()->name,
-                        'token' => Auth::user()->createToken('invoice')->plainTextToken
+                        'nome' => $user->name,
+                        'token' => $user->createToken('invoice')->plainTextToken
                     ],
                 ], 201);
             }else {
@@ -159,7 +168,6 @@ class AuthController extends Controller
 
             $return = [
                 'nome' => $user->name,
-                'email' => $user->email,
                 'token' => $user->createToken('invoice')->plainTextToken
             ];
 
@@ -216,7 +224,7 @@ class AuthController extends Controller
                 $dados['status'] = $request['status'];
             }   
             
-            $usuario = User::where('id', $user->id)->update($dados);
+            $usuario = User::where('cod', $user->cod)->update($dados);
 
             return response()->json([
                 'status' => true,

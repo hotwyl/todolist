@@ -62,6 +62,7 @@ class TaskController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
+                'status' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
@@ -71,7 +72,11 @@ class TaskController extends Controller
                     'task' => null
                 ], 422);
             } else {
-                $task = Auth::user()->tasks()->create($validator->validated());
+                // 
+                $task = new Task($validator->validated());
+                $task->cod = uniqid();
+                $task = Auth::user()->tasks()->create($task->toArray());
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Tarefa criada com sucesso.',
@@ -90,12 +95,13 @@ class TaskController extends Controller
      * Mostra uma tarefa específica.
      *
      * @param  int  $id
+     * @param  string  $cod
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, $cod)
     {
         try {
-            $task = Auth::user()->tasks()->find($id);
+            $task = Auth::user()->tasks()->find($id)->where('cod', $cod)->first();
 
             if (!$task) {
                 return response()->json([
@@ -123,12 +129,13 @@ class TaskController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
+     * @param  string  $cod
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $cod)
     {
         try {
-            $task = Auth::user()->tasks()->find($id);
+            $task = Auth::user()->tasks()->find($id)->where('cod', $cod)->first();
 
             if (!$task) {
                 return response()->json([
@@ -176,12 +183,13 @@ class TaskController extends Controller
      * Remove uma tarefa específica.
      *
      * @param  int  $id
+     * @param  string  $cod
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, $cod)
     {
         try {
-            $task = Auth::user()->tasks()->find($id);
+            $task = $task = Auth::user()->tasks()->find($id)->where('cod', $cod)->first();
 
             if (!$task) {
                 return response()->json([
