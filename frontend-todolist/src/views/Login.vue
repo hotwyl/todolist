@@ -23,6 +23,7 @@
 <script>
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Swal from 'sweetalert2';
+import {useAuth} from '@/stores/auth.js';
 
 export default {
   components: {
@@ -78,6 +79,12 @@ export default {
             timerProgressBar: true,
             timer: 3000
           });
+
+          console.log(response.data);
+
+          //salvar token no localstorage
+          useAuth().setToken(response.data.content.token);
+          useAuth().setUser(response.data.content.nome);
         }
           // Após um registro bem-sucedido
           this.$router.push('/'); // Redireciona para a rota de home

@@ -2,10 +2,14 @@
 <template>
   <nav class="bg-gray-800 p-4">
     <div class="container mx-auto flex items-center justify-between">
-      <router-link to="/" class="text-white text-lg font-bold">Início</router-link>
-      <router-link to="/about" class="text-white">Sobre</router-link>
-      <router-link to="/login" class="text-white">Login</router-link>
-      <router-link to="/register" class="text-white">Registro</router-link>
+      <router-link to="#" class="text-white text-lg font-bold">Home</router-link>
+      <router-link to="#" class="text-white">Listagem</router-link>
+      <router-link to="#" class="text-white">Cadasto</router-link>
+      <router-link to="#" class="text-white">Edição</router-link>
+      <router-link to="#" class="text-white">Exclusão</router-link>
+      <router-link to="#" class="text-white">Consulta</router-link>
+      <router-link to="#" class="text-white">Sobre</router-link>
+      <router-link to="#" class="text-white">Contato</router-link>
       <!-- Adicione mais itens de menu conforme necessário -->
     </div>
   </nav>
