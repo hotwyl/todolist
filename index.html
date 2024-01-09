@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista com Vue.js 3 e Tailwind CSS</title>
+
+  <!-- Inclua os estilos do Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div id="app" class="p-4">
+  <h1 class="text-2xl font-bold mb-4">Lista de Tarefas</h1>
+
+  <div>
+    <input v-model="newItem" @keyup.enter="addItem" class="border p-2">
+    <button @click="addItem" class="bg-blue-500 text-white p-2">Adicionar Item</button>
+  </div>
+
+  <ul class="mt-4">
+    <li v-for="(item, index) in items" :key="index" class="mb-2">
+      {{ item }}
+      <button @click="removeItem(index)" class="ml-2 text-red-500">Remover</button>
+    </li>
+  </ul>
+</div>
+
+ <!-- Inclua o Vue.js 3 CDN -->
+ <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<script>
+// Componente Vue
+const app = Vue.createApp({
+  data() {
+    return {
+      newItem: '',
+      items: []
+    };
+  },
+  mounted() {
+    // Carrega os itens do localStorage quando a aplicação é montada
+    this.loadItems();
+  },
+  methods: {
+    addItem() {
+      if (this.newItem.trim() !== '') {
+        this.items.push(this.newItem.trim());
+        this.newItem = '';
+        this.saveItems(); // Salva os itens no localStorage
+      }
+    },
+    removeItem(index) {
+      this.items.splice(index, 1);
+      this.saveItems(); // Salva os itens no localStorage
+    },
+    saveItems() {
+      // Salva os itens no localStorage
+      localStorage.setItem('todoList', JSON.stringify(this.items));
+    },
+    loadItems() {
+      // Carrega os itens do localStorage
+      const savedItems = localStorage.getItem('todoList');
+      this.items = savedItems ? JSON.parse(savedItems) : [];
+    }
+  }
+});
+
+// Monta a aplicação Vue no elemento com o id "app"
+app.mount('#app');
+</script>
+
+</body>
+</html>
